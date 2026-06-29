@@ -1,0 +1,34 @@
+# B5-1 제출 인덱스
+
+## 1. 프로젝트 정보
+
+- 미션: B5-1. SQL로 만드는 나만의 데이터베이스
+- 주제: 도서 대여 관리 데이터베이스
+- DB: SQLite 3
+
+## 2. 제출 파일
+
+| 제출 요구 | 파일 |
+|---|---|
+| 스키마 생성 SQL | `sql/01_schema.sql` |
+| 샘플 데이터 INSERT SQL | `sql/02_seed.sql` |
+| 핵심 쿼리 15개 SQL | `sql/03_queries.sql` |
+| 실행 결과 텍스트 | `results/query_results.txt` |
+| 검증 결과 텍스트 | `results/validation_results.txt` |
+| ERD 선택 제출 | `docs/ERD.md` |
+| 평가 설명 답안 | `docs/evaluation_answers.md` |
+
+## 3. 자체 검증 체크리스트
+
+- [x] 최소 4개 테이블 존재
+- [x] 각 테이블 PK 존재
+- [x] FK 기반 1:N 관계 2개 이상 존재
+- [x] 각 테이블 10행 이상 샘플 데이터 존재
+- [x] 기본 조회 4개 이상
+- [x] 조인 4개 이상
+- [x] 집계 3개 이상
+- [x] 서브쿼리 1개 이상
+- [x] UPDATE/DELETE 2개 이상
+- [x] CREATE INDEX 1개 이상
+- [x] 쿼리별 설명 포함
+- [x] 실행 결과 텍스트 포함

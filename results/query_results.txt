@@ -1,0 +1,183 @@
+Q01. 기본 조회: ACTIVE 회원 중 2024-03-01 이후 가입자를 확인한다.
+member_id  name  email                    joined_at   status
+---------  ----  -----------------------  ----------  ------
+6          강하린   harin.kang@example.com   2024-03-22  ACTIVE
+7          조은우   eunwoo.cho@example.com   2024-04-08  ACTIVE
+8          윤서준   seojun.yoon@example.com  2024-04-25  ACTIVE
+9          임수아   sua.lim@example.com      2024-05-10  ACTIVE
+10         한지민   jimin.han@example.com    2024-05-28  ACTIVE
+
+
+Q02. 기본 조회: 30,000원 이상 도서를 가격 높은 순으로 5권 확인한다. (WHERE + ORDER BY + LIMIT)
+book_id  title          author  price
+-------  -------------  ------  -----
+8        딥러닝과 수학        윤하늘     42000
+7        머신러닝 기본기       강태오     36000
+4        백엔드 개발 패턴      이도현     35000
+11       자료구조와 알고리즘     남태현     34000
+2        관계형 데이터베이스 설계  박성훈     32000
+
+
+Q03. 기본 조회: 제목에 SQL이 들어간 도서를 검색한다. (LIKE)
+book_id  title    author   price
+-------  -------  -------  -----
+1        SQL 첫걸음  아사이 아츠시  23000
+
+
+Q04. 기본 조회: 현재 대여 중 또는 연체 상태의 대여 기록을 반납기한 순으로 확인한다.
+rental_id  member_id  book_id  rented_at   due_date    status 
+---------  ---------  -------  ----------  ----------  -------
+2          1          3        2024-06-05  2024-06-19  RENTED 
+4          2          5        2024-06-10  2024-06-24  RENTED 
+5          3          7        2024-06-12  2024-06-26  OVERDUE
+6          3          8        2024-06-15  2024-06-29  RENTED 
+7          4          9        2024-06-18  2024-07-02  RENTED 
+8          4          10       2024-06-20  2024-07-04  RENTED 
+9          5          11       2024-06-21  2024-07-05  RENTED 
+10         6          12       2024-06-22  2024-07-06  RENTED 
+12         7          14       2024-06-26  2024-07-10  RENTED 
+13         7          15       2024-06-28  2024-07-12  RENTED 
+14         8          4        2024-07-01  2024-07-15  RENTED 
+15         8          6        2024-07-02  2024-07-16  RENTED 
+16         9          1        2024-07-03  2024-07-17  RENTED 
+17         9          2        2024-07-04  2024-07-18  RENTED 
+18         1          7        2024-07-05  2024-07-19  OVERDUE
+19         2          8        2024-07-06  2024-07-20  RENTED 
+20         3          9        2024-07-07  2024-07-21  RENTED 
+
+
+Q05. INNER JOIN: 최근 대여 기록에서 회원명과 도서명을 함께 확인한다.
+rental_id  member_name  book_title     rented_at   status  
+---------  -----------  -------------  ----------  --------
+20         박도윤          리눅스 운영 실무      2024-07-07  RENTED  
+19         이서연          딥러닝과 수학        2024-07-06  RENTED  
+18         김민준          머신러닝 기본기       2024-07-05  OVERDUE 
+17         임수아          관계형 데이터베이스 설계  2024-07-04  RENTED  
+16         임수아          SQL 첫걸음        2024-07-03  RENTED  
+15         윤서준          HTML CSS 웹 표준  2024-07-02  RENTED  
+14         윤서준          백엔드 개발 패턴      2024-07-01  RENTED  
+13         조은우          개발자를 위한 글쓰기    2024-06-28  RENTED  
+12         조은우          스타트업 지표 읽기     2024-06-26  RENTED  
+11         강하린          UX 리서치 노트      2024-06-25  RETURNED
+
+
+Q06. INNER JOIN: 도서와 카테고리를 연결하여 도서 분류를 확인한다.
+book_id  title          category_name  price
+-------  -------------  -------------  -----
+8        딥러닝과 수학        AI             42000
+7        머신러닝 기본기       AI             36000
+11       자료구조와 알고리즘     Algorithm      34000
+3        FastAPI 실전 입문  Backend        28000
+4        백엔드 개발 패턴      Backend        35000
+14       스타트업 지표 읽기     Business       26000
+15       개발자를 위한 글쓰기    Communication  21000
+1        SQL 첫걸음        Database       23000
+2        관계형 데이터베이스 설계  Database       32000
+13       UX 리서치 노트      Design         25000
+10       AWS 클라우드 기초    DevOps         31000
+9        리눅스 운영 실무      DevOps         27000
+6        HTML CSS 웹 표준  Frontend       22000
+5        모던 JavaScript  Frontend       30000
+12       웹 보안 입문        Security       29000
+
+
+Q07. INNER JOIN: 연체 기록의 회원/도서/카테고리를 한 번에 확인한다.
+rental_id  member_name  book_title  category_name  due_date    rental_fee
+---------  -----------  ----------  -------------  ----------  ----------
+5          박도윤          머신러닝 기본기    AI             2024-06-26  3000      
+18         김민준          머신러닝 기본기    AI             2024-07-19  5000      
+
+
+Q08. LEFT JOIN: 대여 기록이 없는 회원까지 포함하여 회원별 대여 횟수를 확인한다.
+member_id  name  rental_count
+---------  ----  ------------
+10         한지민   0           
+5          정하준   1           
+4          최지우   2           
+6          강하린   2           
+7          조은우   2           
+8          윤서준   2           
+9          임수아   2           
+1          김민준   3           
+2          이서연   3           
+3          박도윤   3           
+
+
+Q09. 집계: 회원별 총 대여 횟수와 납부 수수료 합계를 확인한다. (COUNT + SUM + GROUP BY)
+member_id  name  rental_count  total_fee
+---------  ----  ------------  ---------
+1          김민준   3             6200     
+3          박도윤   3             3000     
+2          이서연   3             1500     
+6          강하린   2             1000     
+9          임수아   2             0        
+8          윤서준   2             0        
+7          조은우   2             0        
+4          최지우   2             0        
+5          정하준   1             0        
+
+
+Q10. 집계: 카테고리별 보유 도서 수와 평균 가격을 확인한다. (COUNT + AVG + GROUP BY)
+category_name  book_count  avg_price
+-------------  ----------  ---------
+AI             2           39000.0  
+Backend        2           31500.0  
+DevOps         2           29000.0  
+Database       2           27500.0  
+Frontend       2           26000.0  
+Algorithm      1           34000.0  
+Security       1           29000.0  
+Business       1           26000.0  
+Design         1           25000.0  
+Communication  1           21000.0  
+
+
+Q11. 집계: 대여 상태별 건수와 수수료 합계를 확인한다. (COUNT + SUM + GROUP BY)
+status    rental_count  total_fee
+--------  ------------  ---------
+RENTED    15            0        
+RETURNED  3             3700     
+OVERDUE   2             8000     
+
+
+Q12. 서브쿼리: 전체 평균 가격보다 비싼 도서를 확인한다.
+book_id  title          price
+-------  -------------  -----
+8        딥러닝과 수학        42000
+7        머신러닝 기본기       36000
+4        백엔드 개발 패턴      35000
+11       자료구조와 알고리즘     34000
+2        관계형 데이터베이스 설계  32000
+10       AWS 클라우드 기초    31000
+5        모던 JavaScript  30000
+
+
+Q13. UPDATE: rental_id=4의 대여 상태를 OVERDUE로 변경하고 결과를 확인한다.
+OK (affected_rows=1)
+
+
+Q13. UPDATE: rental_id=4의 대여 상태를 OVERDUE로 변경하고 결과를 확인한다.
+rental_id  member_id  book_id  due_date    status   rental_fee
+---------  ---------  -------  ----------  -------  ----------
+4          2          5        2024-06-24  OVERDUE  2000      
+
+
+Q14. DELETE: 테스트용 대여 기록 rental_id=20을 삭제하고 삭제 결과를 확인한다.
+OK (affected_rows=1)
+
+
+Q14. DELETE: 테스트용 대여 기록 rental_id=20을 삭제하고 삭제 결과를 확인한다.
+remaining_rentals
+-----------------
+19               
+
+
+Q15. INDEX: 회원별 반납기한 조회가 자주 발생하므로 rental(member_id, due_date)에 인덱스를 생성한다.
+OK (affected_rows=-1)
+
+
+Q15. INDEX: 회원별 반납기한 조회가 자주 발생하므로 rental(member_id, due_date)에 인덱스를 생성한다.
+id  parent  notused  detail                                                       
+--  ------  -------  -------------------------------------------------------------
+4   0       0        SEARCH rental USING INDEX idx_rental_member_due (member_id=?)
+
