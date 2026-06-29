@@ -379,7 +379,7 @@ docs: add Codex review prompts
 | 0 | `training-materials/README.md` | 완료 |
 | 1 | `00-roadmap/b5-1-training-plan.md` | 완료 |
 | 2 | `00-roadmap/daily-checklist.md` | 완료 |
-| 3 | `01-sql-basics/select-where-order-limit.md` | 예정 |
+| 3 | `01-sql-basics/select-where-order-limit.md` | 완료 |
 | 4 | `01-sql-basics/insert-update-delete.md` | 예정 |
 | 5 | `01-sql-basics/practice.sql` | 예정 |
 | 6 | `02-schema-design/table-design-notes.md` | 예정 |
