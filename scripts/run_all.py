@@ -5,16 +5,40 @@ It executes the same SQL files and writes text evidence under results/.
 from __future__ import annotations
 
 import pathlib
-import sqlite3
 import re
+import shutil
+import sqlite3
+import tempfile
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 DB_FILE = ROOT / "book_rental.db"
 RESULTS = ROOT / "results"
+TOTAL_STEPS = 5
+REQUIRED_FILES = [
+    "sql/01_schema.sql",
+    "sql/02_seed.sql",
+    "sql/03_queries.sql",
+    "sql/04_validation.sql",
+    "docs/bonus.sql",
+]
 
 
 def read_project_file(relative_path: str) -> str:
     return (ROOT / relative_path).read_text(encoding="utf-8")
+
+
+def validate_required_files() -> None:
+    missing = [path for path in REQUIRED_FILES if not (ROOT / path).is_file()]
+    if missing:
+        raise SystemExit(f"[ERROR] Missing required file(s): {', '.join(missing)}")
+
+
+def make_query_db_copy() -> pathlib.Path:
+    handle = tempfile.NamedTemporaryFile(prefix="book_rental_queries.", delete=False)
+    query_db = pathlib.Path(handle.name)
+    handle.close()
+    shutil.copy2(DB_FILE, query_db)
+    return query_db
 
 
 def read_sql(name: str) -> str:
@@ -92,7 +116,7 @@ def execute_queries(conn: sqlite3.Connection, relative_path: str) -> str:
                 conn.commit()
                 out.append(f"OK (affected_rows={cur.rowcount})\n")
         except sqlite3.Error as exc:
-            out.append(f"ERROR: {exc}\n")
+            raise RuntimeError(f"Failed to execute {relative_path} after {label!r}: {exc}") from exc
         out.append("")
     return "\n".join(out)
 
@@ -125,21 +149,44 @@ def validation(conn: sqlite3.Connection) -> str:
 
 
 def main() -> None:
+    validate_required_files()
     RESULTS.mkdir(exist_ok=True)
     if DB_FILE.exists():
         DB_FILE.unlink()
+
     conn = sqlite3.connect(DB_FILE)
-    conn.execute("PRAGMA foreign_keys = ON")
-    run_script(conn, "01_schema.sql")
-    run_script(conn, "02_seed.sql")
-    (RESULTS / "validation_results.txt").write_text(validation(conn), encoding="utf-8")
-    (RESULTS / "bonus_results.txt").write_text(execute_queries(conn, "docs/bonus.sql"), encoding="utf-8")
-    (RESULTS / "query_results.txt").write_text(execute_queries(conn, "sql/03_queries.sql"), encoding="utf-8")
-    conn.close()
+    try:
+        conn.execute("PRAGMA foreign_keys = ON")
+
+        print(f"[1/{TOTAL_STEPS}] Creating schema...")
+        run_script(conn, "01_schema.sql")
+
+        print(f"[2/{TOTAL_STEPS}] Inserting seed data...")
+        run_script(conn, "02_seed.sql")
+        conn.commit()
+
+        print(f"[3/{TOTAL_STEPS}] Running validation...")
+        (RESULTS / "validation_results.txt").write_text(validation(conn), encoding="utf-8")
+
+        print(f"[4/{TOTAL_STEPS}] Running bonus report queries...")
+        (RESULTS / "bonus_results.txt").write_text(execute_queries(conn, "docs/bonus.sql"), encoding="utf-8")
+        conn.commit()
+    finally:
+        conn.close()
+
+    query_db = make_query_db_copy()
+    query_conn = sqlite3.connect(query_db)
+    try:
+        query_conn.execute("PRAGMA foreign_keys = ON")
+        print(f"[5/{TOTAL_STEPS}] Running 15 core queries...")
+        (RESULTS / "query_results.txt").write_text(execute_queries(query_conn, "sql/03_queries.sql"), encoding="utf-8")
+    finally:
+        query_conn.close()
+        query_db.unlink(missing_ok=True)
+
     print(f"[DONE] Created {DB_FILE.name}")
-    print("[DONE] Wrote results/validation_results.txt")
-    print("[DONE] Wrote results/bonus_results.txt")
-    print("[DONE] Wrote results/query_results.txt")
+    print("[DONE] Core query mutations were executed on a temporary DB copy.")
+    print("[DONE] Check results/validation_results.txt, results/query_results.txt, and results/bonus_results.txt")
 
 
 if __name__ == "__main__":
