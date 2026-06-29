@@ -15,7 +15,6 @@ book        15
 rental      20       
 
 3) Foreign key integrity check: no rows means OK.
-OK - no foreign key violations
 
 4) Schema overview
 CREATE TABLE member (
@@ -27,13 +26,11 @@ CREATE TABLE member (
     status TEXT NOT NULL DEFAULT 'ACTIVE'
         CHECK (status IN ('ACTIVE', 'SUSPENDED', 'WITHDRAWN'))
 );
-
 CREATE TABLE category (
     category_id INTEGER PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
     description TEXT
 );
-
 CREATE TABLE book (
     book_id INTEGER PRIMARY KEY,
     category_id INTEGER NOT NULL,
@@ -48,7 +45,6 @@ CREATE TABLE book (
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 );
-
 CREATE TABLE rental (
     rental_id INTEGER PRIMARY KEY,
     member_id INTEGER NOT NULL,
