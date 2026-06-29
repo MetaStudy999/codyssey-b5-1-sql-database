@@ -1,0 +1,40 @@
+Bonus 1-A. JOIN 방식: AI 카테고리 도서를 대여한 회원을 찾는다.
+member_id  name
+---------  ----
+1          김민준 
+2          이서연 
+3          박도윤 
+
+Bonus 1-B. 서브쿼리 방식: 같은 요구를 IN 서브쿼리로 해결한다.
+member_id  name
+---------  ----
+1          김민준 
+2          이서연 
+3          박도윤 
+
+Bonus 2. FK 오류 데모: 아래 주석을 해제하면 없는 member_id=999를 참조하므로 실패한다.
+fk_demo_note                                                
+------------------------------------------------------------
+member_id=999는 member 테이블에 없으므로 아래 INSERT를 실행하면 FOREIGN KEY 
+constraint failed가 발생한다.                                    
+
+Bonus 3-1. 미니 리포트: 월별 대여 건수와 상태별 건수를 확인한다.
+rental_month  total_rentals  returned_count  current_rented_count  overdue_count  total_fee
+------------  -------------  --------------  --------------------  -------------  ---------
+2024-06       13             3               9                     1              6700     
+2024-07       7              0               6                     1              5000     
+
+Bonus 3-2. 미니 리포트: 가장 많이 대여된 도서 TOP 5를 확인한다.
+book_id  title          category_name  rental_count  total_fee
+-------  -------------  -------------  ------------  ---------
+7        머신러닝 기본기       AI             2             8000     
+2        관계형 데이터베이스 설계  Database       2             1500     
+1        SQL 첫걸음        Database       2             1200     
+8        딥러닝과 수학        AI             2             0        
+9        리눅스 운영 실무      DevOps         2             0        
+
+Bonus 3-3. 미니 리포트: 연체율이 높은 회원을 확인한다.
+member_id  name  total_rentals  overdue_count  overdue_rate_percent  total_fee
+---------  ----  -------------  -------------  --------------------  ---------
+1          김민준   3              1              33.3                  6200     
+3          박도윤   3              1              33.3                  3000     

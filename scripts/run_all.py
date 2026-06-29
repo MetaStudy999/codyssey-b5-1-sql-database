@@ -13,8 +13,12 @@ DB_FILE = ROOT / "book_rental.db"
 RESULTS = ROOT / "results"
 
 
+def read_project_file(relative_path: str) -> str:
+    return (ROOT / relative_path).read_text(encoding="utf-8")
+
+
 def read_sql(name: str) -> str:
-    return (ROOT / "sql" / name).read_text(encoding="utf-8")
+    return read_project_file(f"sql/{name}")
 
 
 def run_script(conn: sqlite3.Connection, name: str) -> None:
@@ -75,9 +79,9 @@ def split_sql_statements(sql: str) -> list[tuple[str, str]]:
     return pairs
 
 
-def execute_queries(conn: sqlite3.Connection) -> str:
+def execute_queries(conn: sqlite3.Connection, relative_path: str) -> str:
     out: list[str] = []
-    for label, stmt in split_sql_statements(read_sql("03_queries.sql")):
+    for label, stmt in split_sql_statements(read_project_file(relative_path)):
         out.append(label)
         try:
             cur = conn.execute(stmt)
@@ -129,10 +133,12 @@ def main() -> None:
     run_script(conn, "01_schema.sql")
     run_script(conn, "02_seed.sql")
     (RESULTS / "validation_results.txt").write_text(validation(conn), encoding="utf-8")
-    (RESULTS / "query_results.txt").write_text(execute_queries(conn), encoding="utf-8")
+    (RESULTS / "bonus_results.txt").write_text(execute_queries(conn, "docs/bonus.sql"), encoding="utf-8")
+    (RESULTS / "query_results.txt").write_text(execute_queries(conn, "sql/03_queries.sql"), encoding="utf-8")
     conn.close()
     print(f"[DONE] Created {DB_FILE.name}")
     print("[DONE] Wrote results/validation_results.txt")
+    print("[DONE] Wrote results/bonus_results.txt")
     print("[DONE] Wrote results/query_results.txt")
 
 

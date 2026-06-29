@@ -10,6 +10,7 @@
 
 - SQLite 3
 - 선택 이유: 파일 기반 DB라 서버 실행이 필요 없고, 입문자가 로컬에서 재현하기 쉽다.
+- 백엔드 프레임워크: 사용하지 않음
 
 ## 제출물 구성
 
@@ -25,12 +26,15 @@ b5-1-book-rental-db/
 ├── docs/
 │   ├── ERD.md
 │   ├── bonus.sql
+│   ├── mini_report.md
 │   └── evaluation_answers.md
 ├── results/
 │   ├── validation_results.txt
-│   └── query_results.txt
+│   ├── query_results.txt
+│   └── bonus_results.txt
 └── scripts/
-    └── run_all.sh
+    ├── run_all.sh
+    └── run_all.py
 ```
 
 ## 빠른 실행
@@ -45,6 +49,7 @@ chmod +x scripts/run_all.sh
 ```bash
 cat results/validation_results.txt
 cat results/query_results.txt
+cat results/bonus_results.txt
 ```
 
 ## 수동 실행
@@ -54,6 +59,7 @@ rm -f book_rental.db
 sqlite3 book_rental.db < sql/01_schema.sql
 sqlite3 book_rental.db < sql/02_seed.sql
 sqlite3 book_rental.db < sql/04_validation.sql | tee results/validation_results.txt
+sqlite3 book_rental.db < docs/bonus.sql | tee results/bonus_results.txt
 sqlite3 book_rental.db < sql/03_queries.sql | tee results/query_results.txt
 ```
 
@@ -112,6 +118,12 @@ ON rental(member_id, due_date);
 ## 평가 대비 설명
 
 `docs/evaluation_answers.md`를 보고 평가자 앞에서 설명을 연습한다.
+
+## 보너스
+
+- `docs/bonus.sql`: JOIN과 서브쿼리로 같은 요구 해결, FK 오류 데모, 핵심 지표 3개 쿼리
+- `docs/mini_report.md`: 미니 리포트 지표 정의와 활용 설명
+- `results/bonus_results.txt`: 보너스 쿼리 실행 결과
 
 ## ERD
 
