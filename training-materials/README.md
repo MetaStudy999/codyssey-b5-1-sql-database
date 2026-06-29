@@ -2,7 +2,7 @@
 
 이 폴더는 코디세이 B5-1 「SQL로 만드는 나만의 데이터베이스」 미션을 반복 훈련하기 위한 자료 공간이다.
 
-제출용 산출물은 프로젝트 루트의 `sql/`, `docs/`, `results/`, `SUBMISSION.md`에 두고, 이 폴더는 **개념 정리, SQL 반복 연습, 오답 기록, 평가 답변 훈련**에 사용한다.
+제출용 산출물은 프로젝트 루트의 `sql/`, `docs/`, `results/`, `SUBMISSION.md`에 둔다. `training-materials/`는 **개념 정리, SQL 반복 연습, 오답 기록, 평가 답변 훈련**을 위한 별도 공간으로 사용한다.
 
 ---
 
@@ -112,8 +112,6 @@ training-materials/
 
 훈련 전체 계획을 관리한다.
 
-작성 기준:
-
 - 오늘 무엇을 할지 명확히 쓴다.
 - 완료 여부를 체크박스로 남긴다.
 - 평가 전까지 어떤 순서로 반복할지 기록한다.
@@ -123,8 +121,6 @@ training-materials/
 - 오늘 설명 연습할 개념은 무엇인가?
 - 오늘 직접 작성할 SQL은 몇 개인가?
 - 오늘 막힌 오류는 무엇인가?
-
----
 
 ### 4.2 `01-sql-basics/`
 
@@ -146,8 +142,6 @@ SQL 기본 문법을 반복한다.
 - 반드시 `book_rental.db`에 직접 실행한다.
 - 실행 결과를 보고 쿼리 의미를 한 문장으로 설명한다.
 
----
-
 ### 4.3 `02-schema-design/`
 
 테이블 설계와 관계를 설명하는 훈련 공간이다.
@@ -164,8 +158,6 @@ SQL 기본 문법을 반복한다.
 
 > “왜 `rental` 테이블을 따로 만들었나요?”라는 질문에 답할 수 있어야 한다.
 
----
-
 ### 4.4 `03-join-practice/`
 
 JOIN 쿼리를 집중 훈련한다.
@@ -181,8 +173,6 @@ JOIN 쿼리를 집중 훈련한다.
 평가 핵심:
 
 > INNER JOIN은 매칭되는 행만 보여주고, LEFT JOIN은 왼쪽 테이블의 행을 유지한다.
-
----
 
 ### 4.5 `04-aggregation-practice/`
 
@@ -201,8 +191,6 @@ JOIN 쿼리를 집중 훈련한다.
 
 > `GROUP BY`는 같은 기준의 행을 묶고, 집계 함수는 묶인 그룹별 계산을 수행한다.
 
----
-
 ### 4.6 `05-subquery-index/`
 
 서브쿼리와 인덱스를 설명하는 훈련 공간이다.
@@ -217,8 +205,6 @@ JOIN 쿼리를 집중 훈련한다.
 평가 핵심:
 
 > `rental(member_id, due_date)` 인덱스는 특정 회원의 대여 기록을 반납기한 순으로 조회할 때 유리하다.
-
----
 
 ### 4.7 `06-evaluation-qa/`
 
@@ -235,8 +221,6 @@ JOIN 쿼리를 집중 훈련한다.
 7. 인덱스는 왜 필요한가?
 8. 가장 복잡했던 쿼리는 무엇이고 어떻게 풀었는가?
 9. 미션 중 어려웠던 점은 무엇이고 어떻게 해결했는가?
-
----
 
 ### 4.8 `07-error-notes/`
 
@@ -261,8 +245,6 @@ JOIN 쿼리를 집중 훈련한다.
 - `UNIQUE constraint failed`
 - `near "...": syntax error`
 - `database is locked`
-
----
 
 ### 4.9 `08-codex-prompts/`
 
@@ -378,6 +360,7 @@ ORDER BY price DESC;
 
 ```text
 docs: add B5-1 training roadmap
+docs: add B5-1 daily training checklist
 docs: add SQL basics notes
 docs: add schema design notes
 docs: add join practice guide
@@ -394,8 +377,8 @@ docs: add Codex review prompts
 | 순서 | 파일 | 상태 |
 |---:|---|---|
 | 0 | `training-materials/README.md` | 완료 |
-| 1 | `00-roadmap/b5-1-training-plan.md` | 예정 |
-| 2 | `00-roadmap/daily-checklist.md` | 예정 |
+| 1 | `00-roadmap/b5-1-training-plan.md` | 완료 |
+| 2 | `00-roadmap/daily-checklist.md` | 완료 |
 | 3 | `01-sql-basics/select-where-order-limit.md` | 예정 |
 | 4 | `01-sql-basics/insert-update-delete.md` | 예정 |
 | 5 | `01-sql-basics/practice.sql` | 예정 |
