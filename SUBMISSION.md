@@ -20,8 +20,11 @@
 | 검증 결과 텍스트 | `results/validation_results.txt` |
 | 보너스 SQL/리포트 | `docs/bonus.sql`, `docs/mini_report.md` |
 | 보너스 실행 결과 | `results/bonus_results.txt` |
+| FK 오류 재현 SQL | `docs/fk_error_demo.sql` |
+| FK 오류 실행 결과 | `results/fk_error_demo.txt` |
 | ERD 선택 제출 | `docs/ERD.md` |
-| 평가 설명 답안 | `docs/evaluation_answers.md` |
+| 평가문항 상세 답변 | `b5-1-evaluation.md` |
+| 평가 말하기 요약 답안 | `docs/evaluation_answers.md` |
 
 ## 3. 자체 검증 체크리스트
 
@@ -37,6 +40,7 @@
 - [x] CREATE INDEX 1개 이상
 - [x] 쿼리별 설명 포함
 - [x] 실행 결과 텍스트 포함
+- [x] FK 오류 재현 SQL 및 실패 로그 포함
 - [x] 보너스: JOIN 방식과 서브쿼리 방식 비교
 - [x] 보너스: FK 오류 데모 기록
 - [x] 보너스: 핵심 지표 3개 미니 리포트

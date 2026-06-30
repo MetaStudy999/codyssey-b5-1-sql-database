@@ -1,0 +1,13 @@
+Command:
+sqlite3 -bail book_rental.db ".read docs/fk_error_demo.sql"
+
+Expected:
+This command should fail because rental.member_id = 999 does not exist in member.member_id.
+
+Output:
+FK Error Demo. 존재하지 않는 member_id=999를 참조하는 대여 기록 입력을 시도한다.
+Expected result: member_id=999는 member 테이블에 없으므로 FOREIGN KEY constraint failed가 발생해야 정상이다.
+Runtime error near line 14: FOREIGN KEY constraint failed (19)
+
+Exit code:
+1

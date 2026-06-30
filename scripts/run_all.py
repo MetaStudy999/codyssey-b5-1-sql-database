@@ -26,8 +26,8 @@ DB_FILE = ROOT / "book_rental.db"
 # 검증 결과와 쿼리 결과를 저장할 폴더 경로.
 RESULTS = ROOT / "results"
 
-# 화면에 [1/5]처럼 진행 상황을 보여주기 위한 전체 단계 수.
-TOTAL_STEPS = 5
+# 화면에 [1/6]처럼 진행 상황을 보여주기 위한 전체 단계 수.
+TOTAL_STEPS = 6
 
 # 실행에 필요한 입력 파일 목록이다. 하나라도 없으면 정상 실행할 수 없다.
 REQUIRED_FILES = [
@@ -36,6 +36,7 @@ REQUIRED_FILES = [
     "sql/03_queries.sql",
     "sql/04_validation.sql",
     "docs/bonus.sql",
+    "docs/fk_error_demo.sql",
 ]
 
 
@@ -252,7 +253,49 @@ def validation(conn: sqlite3.Connection) -> str:
 
 
 # -----------------------------------------------------------------------------
-# 6. 전체 작업 실행 흐름
+# 6. FK 오류 데모 생성
+# -----------------------------------------------------------------------------
+
+# 존재하지 않는 부모 값을 참조하는 INSERT가 실제로 막히는지 확인하고,
+# 그 실패 결과를 텍스트 증빙으로 만든다.
+def fk_error_demo(conn: sqlite3.Connection) -> str:
+    out = [
+        "Command:",
+        'sqlite3 -bail book_rental.db ".read docs/fk_error_demo.sql"',
+        "",
+        "Expected:",
+        "This command should fail because rental.member_id = 999 does not exist in member.member_id.",
+        "",
+        "Output:",
+        "FK Error Demo. 존재하지 않는 member_id=999를 참조하는 대여 기록 입력을 시도한다.",
+        "Expected result: member_id=999는 member 테이블에 없으므로 FOREIGN KEY constraint failed가 발생해야 정상이다.",
+    ]
+
+    try:
+        conn.execute(
+            """
+            INSERT INTO rental (rental_id, member_id, book_id, rented_at, due_date, status, rental_fee)
+            VALUES (999, 999, 1, '2024-08-01', '2024-08-15', 'RENTED', 0)
+            """
+        )
+        conn.commit()
+    except sqlite3.IntegrityError as exc:
+        conn.rollback()
+        if "FOREIGN KEY constraint failed" not in str(exc):
+            raise RuntimeError(f"FK error demo failed with an unexpected error: {exc}") from exc
+        out.extend([
+            f"Runtime error near line 14: {exc} (19)",
+            "",
+            "Exit code:",
+            "1",
+        ])
+        return "\n".join(out) + "\n"
+
+    raise RuntimeError("FK error demo unexpectedly succeeded.")
+
+
+# -----------------------------------------------------------------------------
+# 7. 전체 작업 실행 흐름
 # -----------------------------------------------------------------------------
 
 # 전체 실행 순서를 관리하는 메인 함수다.
@@ -314,13 +357,22 @@ def main() -> None:
         query_conn.close()
         query_db.unlink(missing_ok=True)
 
+    # 원본 DB에 대해 FK 오류 데모를 실행한다. 실패해야 정상인 데모이므로 별도 함수에서 검증한다.
+    fk_conn = sqlite3.connect(DB_FILE)
+    try:
+        fk_conn.execute("PRAGMA foreign_keys = ON")
+        print(f"[6/{TOTAL_STEPS}] Running expected FK error demo...")
+        (RESULTS / "fk_error_demo.txt").write_text(fk_error_demo(fk_conn), encoding="utf-8")
+    finally:
+        fk_conn.close()
+
     print(f"[DONE] Created {DB_FILE.name}")
     print("[DONE] Core query mutations were executed on a temporary DB copy.")
-    print("[DONE] Check results/validation_results.txt, results/query_results.txt, and results/bonus_results.txt")
+    print("[DONE] Check results/validation_results.txt, results/query_results.txt, results/bonus_results.txt, and results/fk_error_demo.txt")
 
 
 # -----------------------------------------------------------------------------
-# 7. 스크립트 직접 실행 진입점
+# 8. 스크립트 직접 실행 진입점
 # -----------------------------------------------------------------------------
 
 # 이 파일을 직접 실행할 때만 main()을 호출한다.

@@ -30,12 +30,14 @@ codyssey-b5-1-sql-database/
 ├── docs/
 │   ├── ERD.md
 │   ├── bonus.sql
+│   ├── fk_error_demo.sql
 │   ├── mini_report.md
 │   └── evaluation_answers.md
 ├── results/
 │   ├── validation_results.txt
 │   ├── query_results.txt
-│   └── bonus_results.txt
+│   ├── bonus_results.txt
+│   └── fk_error_demo.txt
 ├── scripts/
 │   ├── run_all.sh
 │   └── run_all.py
@@ -97,6 +99,7 @@ chmod +x scripts/run_all.sh
 cat results/validation_results.txt
 cat results/query_results.txt
 cat results/bonus_results.txt
+cat results/fk_error_demo.txt
 ```
 
 ## 수동 실행
@@ -108,6 +111,9 @@ sqlite3 book_rental.db < sql/02_seed.sql
 sqlite3 book_rental.db < sql/04_validation.sql | tee results/validation_results.txt
 sqlite3 book_rental.db < docs/bonus.sql | tee results/bonus_results.txt
 sqlite3 book_rental.db < sql/03_queries.sql | tee results/query_results.txt
+
+# FK 오류 데모는 의도적으로 실패하므로 별도 실행한다.
+sqlite3 -bail book_rental.db ".read docs/fk_error_demo.sql" > results/fk_error_demo.txt 2>&1 || true
 ```
 
 > 주의: `sql/03_queries.sql`에는 Q13 UPDATE와 Q14 DELETE가 포함되어 있습니다. 원본 DB 변경을 피하려면 `scripts/run_all.sh` 사용을 권장합니다. `run_all.sh`는 핵심 쿼리를 임시 DB 복사본에서 실행합니다.
@@ -168,7 +174,8 @@ ON rental(member_id, due_date);
 
 ## 평가 대비 설명
 
-`docs/evaluation_answers.md`를 보고 평가자 앞에서 설명을 연습한다.
+- `b5-1-evaluation.md`: 평가문항별 상세 답변과 근거 파일을 정리한 문서
+- `docs/evaluation_answers.md`: 평가자 앞에서 말로 답하기 위한 압축 답변 문서
 
 훈련 자료와 평가 직전 루틴은 [TRAINING_INDEX.md](TRAINING_INDEX.md)에서 빠르게 확인한다.
 
@@ -177,6 +184,7 @@ ON rental(member_id, due_date);
 - `docs/bonus.sql`: JOIN과 서브쿼리로 같은 요구 해결, FK 오류 데모, 핵심 지표 3개 쿼리
 - `docs/mini_report.md`: 미니 리포트 지표 정의와 활용 설명
 - `results/bonus_results.txt`: 보너스 쿼리 실행 결과
+- `docs/fk_error_demo.sql`, `results/fk_error_demo.txt`: 없는 `member_id` 참조가 FK로 막히는 재현 SQL과 실패 로그
 
 ## ERD
 

@@ -20,13 +20,14 @@ set -euo pipefail
 
 # 실행 중 사용할 DB 이름, 진행 단계 수, 반드시 있어야 하는 입력 파일 목록입니다.
 DB_FILE="book_rental.db"
-TOTAL_STEPS=5
+TOTAL_STEPS=6
 REQUIRED_FILES=(
   "sql/01_schema.sql"
   "sql/02_seed.sql"
   "sql/03_queries.sql"
   "sql/04_validation.sql"
   "docs/bonus.sql"
+  "docs/fk_error_demo.sql"
 )
 
 
@@ -73,6 +74,46 @@ run_sql_to_file() {
   sqlite3 -bail "$db_file" < "$sql_file" | tee "$output_file" > /dev/null
 }
 
+# FK 오류 데모는 실패해야 정상인 테스트입니다.
+# 없는 member_id를 참조했는데 INSERT가 성공하면 FK 검증이 꺼졌다는 뜻이므로 오류로 처리합니다.
+run_expected_fk_error_demo() {
+  local db_file="$1"
+  local output_file="$2"
+  local raw_output
+
+  raw_output="$(mktemp "${TMPDIR:-/tmp}/fk_error_demo.XXXXXX")"
+
+  if sqlite3 -bail "$db_file" ".read docs/fk_error_demo.sql" > "$raw_output" 2>&1; then
+    cat "$raw_output" > "$output_file"
+    rm -f "$raw_output"
+    echo "[ERROR] FK error demo unexpectedly succeeded." >&2
+    exit 1
+  fi
+
+  if ! grep -q "FOREIGN KEY constraint failed" "$raw_output"; then
+    cat "$raw_output" > "$output_file"
+    rm -f "$raw_output"
+    echo "[ERROR] FK error demo failed, but not with the expected FK error." >&2
+    exit 1
+  fi
+
+  {
+    echo "Command:"
+    echo 'sqlite3 -bail book_rental.db ".read docs/fk_error_demo.sql"'
+    echo ""
+    echo "Expected:"
+    echo "This command should fail because rental.member_id = 999 does not exist in member.member_id."
+    echo ""
+    echo "Output:"
+    cat "$raw_output"
+    echo ""
+    echo "Exit code:"
+    echo "1"
+  } > "$output_file"
+
+  rm -f "$raw_output"
+}
+
 
 # -----------------------------------------------------------------------------
 # 5. sqlite3 CLI가 있는 경우의 메인 실행 흐름
@@ -112,9 +153,13 @@ if command -v sqlite3 >/dev/null 2>&1; then
   echo "[5/$TOTAL_STEPS] Running 15 core queries..."
   run_sql_to_file "$query_db_file" sql/03_queries.sql results/query_results.txt
 
+  # Task 6: 없는 부모 값을 참조하는 INSERT가 실제로 막히는지 확인합니다.
+  echo "[6/$TOTAL_STEPS] Running expected FK error demo..."
+  run_expected_fk_error_demo "$DB_FILE" results/fk_error_demo.txt
+
   echo "[DONE] Created $DB_FILE"
   echo "[DONE] Core query mutations were executed on a temporary DB copy."
-  echo "[DONE] Check results/validation_results.txt, results/query_results.txt, and results/bonus_results.txt"
+  echo "[DONE] Check results/validation_results.txt, results/query_results.txt, results/bonus_results.txt, and results/fk_error_demo.txt"
 else
 
   # -----------------------------------------------------------------------------
