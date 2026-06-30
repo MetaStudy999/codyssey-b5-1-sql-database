@@ -153,3 +153,4 @@ remaining_rentals
 Q15. INDEX: 회원별 반납기한 조회가 자주 발생하므로 rental(member_id, due_date)에 인덱스를 생성한다.
 QUERY PLAN
 `--SEARCH rental USING INDEX idx_rental_member_due (member_id=?)
+Q15 해석: SEARCH rental USING INDEX idx_rental_member_due가 보이면 member_id 조건 검색에 복합 인덱스가 사용된 것이다.

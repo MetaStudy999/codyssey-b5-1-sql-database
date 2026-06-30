@@ -15,9 +15,13 @@
 ## 제출물 구성
 
 ```text
-b5-1-book-rental-db/
+codyssey-b5-1-sql-database/
+├── .gitignore
 ├── README.md
 ├── SUBMISSION.md
+├── TRAINING_INDEX.md
+├── b5-1-evaluation.md
+├── b5-1-mission.md
 ├── sql/
 │   ├── 01_schema.sql
 │   ├── 02_seed.sql
@@ -32,10 +36,53 @@ b5-1-book-rental-db/
 │   ├── validation_results.txt
 │   ├── query_results.txt
 │   └── bonus_results.txt
-└── scripts/
-    ├── run_all.sh
-    └── run_all.py
+├── scripts/
+│   ├── run_all.sh
+│   └── run_all.py
+└── training-materials/
+    ├── README.md
+    ├── README-final-index.md
+    ├── 00-roadmap/
+    │   ├── b5-1-training-plan.md
+    │   └── daily-checklist.md
+    ├── 01-sql-basics/
+    │   ├── insert-update-delete.md
+    │   ├── practice.sql
+    │   └── select-where-order-limit.md
+    ├── 02-schema-design/
+    │   ├── erd-practice.md
+    │   ├── normalization-basic.md
+    │   ├── pk-fk-constraints.md
+    │   └── table-design-notes.md
+    ├── 03-join-practice/
+    │   ├── inner-join.md
+    │   ├── join-practice.sql
+    │   ├── join-vs-subquery.md
+    │   └── left-join.md
+    ├── 04-aggregation-practice/
+    │   ├── aggregation-practice.sql
+    │   ├── group-by-count-sum-avg.md
+    │   └── ranking-query-practice.md
+    ├── 05-subquery-index/
+    │   ├── explain-query-plan.md
+    │   ├── index-basic.md
+    │   └── subquery-basic.md
+    ├── 06-evaluation-qa/
+    │   ├── answer-scripts.md
+    │   ├── expected-questions.md
+    │   └── final-checklist.md
+    ├── 07-error-notes/
+    │   └── mistakes-log.md
+    └── 07-review/
+        ├── final-submit-commands.md
+        ├── mvp-to-advanced-roadmap.md
+        ├── project-file-audit.md
+        ├── refactor-todo.md
+        ├── review-practice.sql
+        └── score-self-review.md
 ```
+
+DB 파일은 생성 산출물이므로 repo에 포함하지 않는다. `./scripts/run_all.sh`를 실행하면 스키마와 시드 데이터로 `book_rental.db`가 다시 생성된다.
 
 ## 빠른 실행
 
@@ -62,6 +109,8 @@ sqlite3 book_rental.db < sql/04_validation.sql | tee results/validation_results.
 sqlite3 book_rental.db < docs/bonus.sql | tee results/bonus_results.txt
 sqlite3 book_rental.db < sql/03_queries.sql | tee results/query_results.txt
 ```
+
+> 주의: `sql/03_queries.sql`에는 Q13 UPDATE와 Q14 DELETE가 포함되어 있습니다. 원본 DB 변경을 피하려면 `scripts/run_all.sh` 사용을 권장합니다. `run_all.sh`는 핵심 쿼리를 임시 DB 복사본에서 실행합니다.
 
 ## 테이블 설계
 
@@ -105,6 +154,8 @@ sqlite3 book_rental.db < sql/03_queries.sql | tee results/query_results.txt
 | Q13 | UPDATE | 대여 상태를 OVERDUE로 변경 |
 | Q14 | DELETE | 테스트 대여 기록 삭제 |
 | Q15 | INDEX | `rental(member_id, due_date)` 인덱스 생성 |
+
+> Q13 `UPDATE`와 Q14 `DELETE`는 데이터를 변경하므로 실행 전 대상 행을 확인하고, PK 기준 `WHERE` 조건을 명확히 사용한다. 자동 실행 시에는 임시 DB 복사본에서 실행되어 원본 DB가 훼손되지 않는다.
 
 ## 인덱스 적용 이유
 

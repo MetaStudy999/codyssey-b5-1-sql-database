@@ -33,6 +33,3 @@ venv/
 *.db-journal
 *.db-shm
 *.db-wal
-
-# Keep the project database that is already part of the submission.
-!book_rental.db

@@ -167,3 +167,4 @@ SELECT rental_id, member_id, book_id, due_date, status
 FROM rental
 WHERE member_id = 1
 ORDER BY due_date ASC;
+.print 'Q15 해석: SEARCH rental USING INDEX idx_rental_member_due가 보이면 member_id 조건 검색에 복합 인덱스가 사용된 것이다.'
