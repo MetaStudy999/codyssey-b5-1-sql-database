@@ -1,3 +1,4 @@
+-- ============================================================================
 -- B5-1 Final Review Practice Script
 -- DB: SQLite 3
 -- Purpose: final smoke test for schema, data, relationships, joins, aggregation, subquery, DML safety, and index review.
@@ -8,16 +9,37 @@
 --   This script does not persist row data changes.
 --   UPDATE/DELETE practice is wrapped in SAVEPOINT and rolled back.
 --   It may create idx_rental_member_due if the index is missing, because that index is part of the B5-1 core query requirement.
+--
+-- 입문자 메모
+-- - 이 파일은 B5-1 과제 전체를 마지막으로 점검하는 종합 리허설입니다.
+-- - 스키마, 샘플 데이터, FK 관계, 기본 조회, JOIN, GROUP BY, 서브쿼리, DML 안전성, 인덱스를 순서대로 확인합니다.
+-- - UPDATE/DELETE는 SAVEPOINT로 감싼 뒤 ROLLBACK하므로 행 데이터 변경은 남지 않습니다.
+-- - 단, idx_rental_member_due 인덱스는 핵심 요구사항이라 없으면 생성될 수 있습니다.
+-- ============================================================================
 
+-- ============================================================================
+-- 1. SQLite 기본 설정
+-- ============================================================================
+-- 외래키 검사를 켜고, SQLite CLI 결과를 표 형태로 보기 좋게 출력합니다.
+-- .headers, .mode, .print는 SQLite CLI 전용 보조 명령입니다.
 PRAGMA foreign_keys = ON;
 .headers on
 .mode column
 
+-- ============================================================================
+-- 2. 리뷰 시작 안내 출력
+-- ============================================================================
+-- 터미널에서 어떤 점검 파일이 실행 중인지 알아보기 쉽도록 제목을 출력합니다.
 .print '============================================================'
 .print 'B5-1 FINAL REVIEW PRACTICE'
 .print 'schema / data / join / aggregation / subquery / dml / index'
 .print '============================================================'
 
+-- ============================================================================
+-- 3. 제출 준비 스모크 체크
+-- ============================================================================
+-- 스모크 체크는 큰 문제가 없는지 빠르게 확인하는 최소 점검입니다.
+-- 테이블 존재 여부, 행 수, 외래키 정의, FK 무결성을 먼저 확인합니다.
 .print ''
 .print '[Section 1] Submission readiness smoke check'
 
@@ -51,6 +73,11 @@ PRAGMA foreign_key_list('book');
 .print '[Q05] FK 무결성 위반 여부를 확인한다. 결과가 비어 있으면 정상이다.'
 PRAGMA foreign_key_check;
 
+-- ============================================================================
+-- 4. 기본 SELECT 리뷰
+-- ============================================================================
+-- WHERE, ORDER BY, LIMIT, LIKE, IN을 사용해 단일 테이블 조회 기본기를 확인합니다.
+-- 결과 컬럼을 필요한 만큼만 고르면 출력이 읽기 쉽고 의도가 분명해집니다.
 .print ''
 .print '============================================================'
 .print '[Section 2] Basic SELECT review'
@@ -101,6 +128,11 @@ FROM rental
 WHERE status IN ('RENTED', 'OVERDUE')
 ORDER BY due_date ASC, rental_id ASC;
 
+-- ============================================================================
+-- 5. JOIN 리뷰
+-- ============================================================================
+-- INNER JOIN은 연결된 행만 보여주고, LEFT JOIN은 왼쪽 테이블의 행을 유지합니다.
+-- rental을 중심으로 member, book, category를 붙이면 대여 상세 화면 같은 결과를 만들 수 있습니다.
 .print ''
 .print '============================================================'
 .print '[Section 3] JOIN review'
@@ -155,6 +187,12 @@ LEFT JOIN rental r ON m.member_id = r.member_id
 GROUP BY m.member_id, m.name
 ORDER BY rental_count ASC, m.member_id ASC;
 
+-- ============================================================================
+-- 6. GROUP BY와 순위 리뷰
+-- ============================================================================
+-- GROUP BY는 여러 행을 기준별로 묶고, COUNT/SUM/AVG로 요약값을 계산합니다.
+-- HAVING은 집계가 끝난 뒤 "2건 이상" 같은 조건을 걸 때 사용합니다.
+-- ORDER BY + LIMIT는 TOP N 결과를 만들 때 사용합니다.
 .print ''
 .print '============================================================'
 .print '[Section 4] GROUP BY and ranking review'
@@ -213,6 +251,12 @@ GROUP BY m.member_id, m.name
 HAVING COUNT(r.rental_id) >= 2
 ORDER BY rental_count DESC, m.member_id ASC;
 
+-- ============================================================================
+-- 7. 서브쿼리 리뷰
+-- ============================================================================
+-- 서브쿼리는 쿼리 안에 들어가는 또 다른 SELECT입니다.
+-- 평균 가격처럼 먼저 계산할 값이 있거나, EXISTS/NOT EXISTS처럼 존재 여부를 확인할 때 유용합니다.
+-- 상관 서브쿼리는 바깥 쿼리의 컬럼을 안쪽 쿼리에서 참조합니다.
 .print ''
 .print '============================================================'
 .print '[Section 5] Subquery review'
@@ -267,11 +311,18 @@ SELECT c.category_id,
 FROM category c
 ORDER BY book_count DESC, c.category_id ASC;
 
+-- ============================================================================
+-- 8. UPDATE/DELETE 안전 리뷰
+-- ============================================================================
+-- SAVEPOINT는 트랜잭션 안의 임시 저장 지점입니다.
+-- UPDATE/DELETE를 실행한 뒤 ROLLBACK TO로 되돌리고, RELEASE로 저장 지점을 정리합니다.
+-- 실무에서도 UPDATE/DELETE는 먼저 SELECT로 대상 행을 확인한 뒤 실행하는 습관이 중요합니다.
 .print ''
 .print '============================================================'
 .print '[Section 6] UPDATE/DELETE safety review - rolled back'
 .print '============================================================'
 
+-- 수정 전 상태를 먼저 조회해 어떤 행을 바꾸는지 확인합니다.
 .print ''
 .print '[Q23] UPDATE 안전 연습: rental_id=4를 수정한 뒤 ROLLBACK한다.'
 SELECT rental_id,
@@ -282,6 +333,7 @@ SELECT rental_id,
 FROM rental
 WHERE rental_id = 4;
 
+-- review_update 저장 지점 이후의 변경만 되돌릴 수 있습니다.
 SAVEPOINT review_update;
 UPDATE rental
 SET status = 'OVERDUE',
@@ -299,6 +351,7 @@ WHERE rental_id = 4;
 ROLLBACK TO review_update;
 RELEASE review_update;
 
+-- ROLLBACK 후 다시 조회해 원래 상태로 돌아왔는지 확인합니다.
 .print '[Q23-check] UPDATE ROLLBACK 후 원래 상태를 다시 확인한다.'
 SELECT rental_id,
        member_id,
@@ -313,6 +366,7 @@ WHERE rental_id = 4;
 SELECT COUNT(*) AS before_delete_count
 FROM rental;
 
+-- DELETE도 SAVEPOINT로 감싸면 실습 후 전체 건수를 원래대로 되돌릴 수 있습니다.
 SAVEPOINT review_delete;
 DELETE FROM rental
 WHERE rental_id = 20;
@@ -327,6 +381,12 @@ RELEASE review_delete;
 SELECT COUNT(*) AS after_rollback_count
 FROM rental;
 
+-- ============================================================================
+-- 9. 인덱스와 실행 계획 리뷰
+-- ============================================================================
+-- 인덱스는 자주 검색하거나 정렬하는 컬럼을 빠르게 찾기 위한 보조 구조입니다.
+-- idx_rental_member_due는 member_id로 찾고 due_date로 정렬하는 조회를 돕습니다.
+-- EXPLAIN QUERY PLAN은 SQLite가 어떤 방식으로 데이터를 찾을지 보여줍니다.
 .print ''
 .print '============================================================'
 .print '[Section 7] Index and execution plan review'
@@ -357,6 +417,10 @@ FROM rental
 WHERE member_id = 1
 ORDER BY due_date ASC;
 
+-- ============================================================================
+-- 10. 평가 말하기 연습
+-- ============================================================================
+-- 아래 질문은 SQL 결과를 읽는 데서 끝나지 않고 설계 의도와 문법 선택 이유를 설명하기 위한 연습입니다.
 .print ''
 .print '============================================================'
 .print '[Section 8] Evaluation speaking prompts'
@@ -374,6 +438,10 @@ ORDER BY due_date ASC;
 .print '말하기 9: idx_rental_member_due 인덱스 목적을 설명하라.'
 .print '말하기 10: EXPLAIN QUERY PLAN의 역할을 설명하라.'
 
+-- ============================================================================
+-- 11. 리뷰 종료 안내
+-- ============================================================================
+-- SAVEPOINT로 감싼 UPDATE/DELETE는 되돌렸으므로 행 데이터 변경은 남지 않습니다.
 .print ''
 .print '============================================================'
 .print 'Final review completed. Row data changes were rolled back.'

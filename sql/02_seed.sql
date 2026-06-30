@@ -1,8 +1,27 @@
+-- ============================================================================
 -- B5-1 SQL Mission: sample data
 -- Rule: insert parent tables first, then child table.
+--
+-- 입문자 메모
+-- - seed 데이터는 실습과 검증에 사용할 "초기 샘플 데이터"입니다.
+-- - 외래키(FK)가 있는 테이블은 참조 대상 데이터가 먼저 있어야 합니다.
+-- - 그래서 member/category 같은 부모 테이블을 먼저 채우고,
+--   book/rental 같은 자식 테이블을 나중에 채웁니다.
+-- ============================================================================
 
+-- ============================================================================
+-- 1. SQLite 기본 설정
+-- ============================================================================
+-- 샘플 데이터를 넣을 때도 외래키 검사를 켜 두면
+-- 잘못된 member_id, book_id, category_id 입력을 바로 발견할 수 있습니다.
 PRAGMA foreign_keys = ON;
 
+-- ============================================================================
+-- 2. 회원 샘플 데이터: member
+-- ============================================================================
+-- 회원 10명을 입력합니다.
+-- member_id를 직접 지정해 두면 이후 rental 데이터에서 특정 회원을 참조하기 쉽습니다.
+-- status는 01_schema.sql에서 정한 CHECK 규칙에 맞는 값만 사용할 수 있습니다.
 INSERT INTO member (member_id, name, email, phone, joined_at, status) VALUES
 (1, '김민준', 'minjun.kim@example.com', '010-1000-0001', '2024-01-03', 'ACTIVE'),
 (2, '이서연', 'seoyeon.lee@example.com', '010-1000-0002', '2024-01-15', 'ACTIVE'),
@@ -15,6 +34,11 @@ INSERT INTO member (member_id, name, email, phone, joined_at, status) VALUES
 (9, '임수아', 'sua.lim@example.com', '010-1000-0009', '2024-05-10', 'ACTIVE'),
 (10, '한지민', 'jimin.han@example.com', '010-1000-0010', '2024-05-28', 'ACTIVE');
 
+-- ============================================================================
+-- 3. 카테고리 샘플 데이터: category
+-- ============================================================================
+-- 도서가 속할 분류 10개를 입력합니다.
+-- book 테이블은 category_id를 외래키로 참조하므로 반드시 book보다 먼저 입력합니다.
 INSERT INTO category (category_id, name, description) VALUES
 (1, 'Database', 'SQL and database design'),
 (2, 'Backend', 'Server-side development'),
@@ -27,6 +51,13 @@ INSERT INTO category (category_id, name, description) VALUES
 (9, 'Business', 'Startup and business strategy'),
 (10, 'Communication', 'Writing and collaboration');
 
+-- ============================================================================
+-- 4. 도서 샘플 데이터: book
+-- ============================================================================
+-- 도서 15권을 입력합니다.
+-- 각 책의 category_id는 위에서 만든 category.category_id 중 하나여야 합니다.
+-- isbn은 UNIQUE 제약조건이 있으므로 중복되면 INSERT가 실패합니다.
+-- stock과 price는 CHECK 제약조건 때문에 0보다 작을 수 없습니다.
 INSERT INTO book (book_id, category_id, title, author, published_year, isbn, price, stock, created_at) VALUES
 (1, 1, 'SQL 첫걸음', '아사이 아츠시', 2020, '978-89-001-0001', 23000, 3, '2024-01-01'),
 (2, 1, '관계형 데이터베이스 설계', '박성훈', 2022, '978-89-001-0002', 32000, 2, '2024-01-03'),
@@ -44,6 +75,13 @@ INSERT INTO book (book_id, category_id, title, author, published_year, isbn, pri
 (14, 9, '스타트업 지표 읽기', '신유나', 2024, '978-89-001-0014', 26000, 3, '2024-02-18'),
 (15, 10, '개발자를 위한 글쓰기', '백은지', 2020, '978-89-001-0015', 21000, 5, '2024-02-20');
 
+-- ============================================================================
+-- 5. 대여 샘플 데이터: rental
+-- ============================================================================
+-- 대여 기록 20건을 입력합니다.
+-- member_id와 book_id는 각각 member/book 테이블에 이미 존재하는 값이어야 합니다.
+-- returned_at이 NULL이면 아직 반납하지 않은 상태를 뜻합니다.
+-- status와 rental_fee를 함께 보면 정상 대여, 반납, 연체 상황을 연습할 수 있습니다.
 INSERT INTO rental (rental_id, member_id, book_id, rented_at, due_date, returned_at, status, rental_fee) VALUES
 (1, 1, 1, '2024-06-01', '2024-06-15', '2024-06-12', 'RETURNED', 1200),
 (2, 1, 3, '2024-06-05', '2024-06-19', NULL, 'RENTED', 0),
