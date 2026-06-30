@@ -119,6 +119,8 @@ ON rental(member_id, due_date);
 
 `docs/evaluation_answers.md`를 보고 평가자 앞에서 설명을 연습한다.
 
+훈련 자료와 평가 직전 루틴은 [TRAINING_INDEX.md](TRAINING_INDEX.md)에서 빠르게 확인한다.
+
 ## 보너스
 
 - `docs/bonus.sql`: JOIN과 서브쿼리로 같은 요구 해결, FK 오류 데모, 핵심 지표 3개 쿼리

@@ -32,6 +32,7 @@ training-materials/
 ├── 04-aggregation-practice/
 ├── 05-subquery-index/
 ├── 06-evaluation-qa/
+├── 07-error-notes/
 ├── 07-review/
 └── README-final-index.md
 ```
@@ -56,8 +57,11 @@ training-materials/
 | 평가 예상 질문 | `06-evaluation-qa/expected-questions.md` |
 | 말하기 스크립트 | `06-evaluation-qa/answer-scripts.md` |
 | 최종 체크 | `06-evaluation-qa/final-checklist.md` |
+| 오류/오답 기록 | `07-error-notes/mistakes-log.md` |
+| 제출 파일 점검 | `07-review/project-file-audit.md` |
 | 자가 점수 | `07-review/score-self-review.md` |
 | 리팩터링 TODO | `07-review/refactor-todo.md` |
+| 최종 제출 명령 | `07-review/final-submit-commands.md` |
 | 고도화 로드맵 | `07-review/mvp-to-advanced-roadmap.md` |
 | 최종 SQL 복습 | `07-review/review-practice.sql` |
 
@@ -307,12 +311,30 @@ JOIN/GROUP BY/서브쿼리/인덱스를 말로 설명할 수 있는가?
 
 ---
 
-## 6.8 `07-review/`
+## 6.8 `07-error-notes/`
 
 | 파일 | 목적 |
 |---|---|
+| `mistakes-log.md` | SQL 실행 오류, 원인, 해결 방법, 다음 주의점을 기록 |
+
+핵심 질문:
+
+```text
+어떤 명령에서 막혔는가?
+오류 메시지는 무엇이었는가?
+다음에는 어떻게 피할 것인가?
+```
+
+---
+
+## 6.9 `07-review/`
+
+| 파일 | 목적 |
+|---|---|
+| `project-file-audit.md` | 제출 파일 누락과 감점 위험 점검 |
 | `score-self-review.md` | 100점 기준 자가 채점, 감점 위험 진단 |
 | `refactor-todo.md` | P0/P1/P2 리팩터링 TODO와 감점 방지 항목 |
+| `final-submit-commands.md` | 최종 실행, 확인, 제출 전 명령 정리 |
 | `mvp-to-advanced-roadmap.md` | SQLite MVP에서 FastAPI/인증/배포로 확장하는 로드맵 |
 | `review-practice.sql` | 최종 종합 SQL 복습 스크립트 |
 
